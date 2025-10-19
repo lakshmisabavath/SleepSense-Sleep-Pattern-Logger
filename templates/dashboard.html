@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleepSense - Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f8e9; text-align: center; padding: 40px; }
+        h1 { color: #2e7d32; }
+        table { margin: 20px auto; border-collapse: collapse; width: 80%; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #a5d6a7; padding: 10px; text-align: center; }
+        th { background: #66bb6a; color: white; }
+        tr:nth-child(even) { background: #f1f8e9; }
+        .suggestion { background: #c8e6c9; padding: 15px; border-radius: 10px; margin-top: 25px; width: 60%; margin-left: auto; margin-right: auto; }
+        a { color: #2e7d32; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>Sleep Dashboard 🌙</h1>
+    <h3>Average Sleep Duration: {{ avg_sleep }} hours</h3>
+    <div class="suggestion">
+        <p><strong>Tip:</strong> {{ suggestions }}</p>
+    </div>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Sleep Time</th>
+            <th>Wake Time</th>
+            <th>Duration (hrs)</th>
+        </tr>
+        {% for entry in data %}
+        <tr>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.sleep_time }}</td>
+            <td>{{ entry.wake_time }}</td>
+            <td>{{ entry.duration }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p><a href="/">Log Another Sleep</a></p>
+</body>
+</html>

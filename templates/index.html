@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleepSense - Log Sleep</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #e3f2fd; text-align: center; padding: 40px; }
+        h1 { color: #0d47a1; }
+        form { background: white; display: inline-block; padding: 20px 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        input, select, button { margin: 10px; padding: 10px; border-radius: 8px; border: 1px solid #90caf9; font-size: 16px; }
+        button { background: #1976d2; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0d47a1; }
+        a { color: #1976d2; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>SleepSense 💤</h1>
+    <h3>Track your sleep for a healthier life</h3>
+
+    <form method="POST" action="/log">
+        <label>Sleep Time:</label><br>
+        <input type="time" name="sleep_time" required>
+        <select name="sleep_period">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select><br>
+
+        <label>Wake Time:</label><br>
+        <input type="time" name="wake_time" required>
+        <select name="wake_period">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select><br><br>
+
+        <button type="submit">Log Sleep</button>
+    </form>
+
+    <p><a href="/dashboard">View Sleep Dashboard</a></p>
+</body>
+</html>
