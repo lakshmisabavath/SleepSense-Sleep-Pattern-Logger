@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sleepsense-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sleepsense
+  template:
+    metadata:
+      labels:
+        app: sleepsense
+    spec:
+      containers:
+      - name: sleepsense-container
+        image: <dockerhub-username>/sleepsense-app:latest
+        ports:
+        - containerPort: 5000
