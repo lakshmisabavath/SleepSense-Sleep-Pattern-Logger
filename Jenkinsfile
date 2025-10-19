@@ -6,10 +6,9 @@ pipeline {
         DOCKER_IMAGE = 'dockerhub-sabavathlakshmi/sleepsense-app'
     }
 
-    stages {
-        stage('Checkout') {
+    stage('Docker Login') {
             steps {
-                git 'https://github.com/<your-username>/SleepSense.git'
+                bat 'docker login -u sabavathlakshmi -p Laxmi@Sabavath'
             }
         }
 
