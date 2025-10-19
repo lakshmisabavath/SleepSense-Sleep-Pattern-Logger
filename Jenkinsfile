@@ -2,61 +2,40 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "sleepsense"
-        DOCKER_IMAGE = "sleepsense-app:latest"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Add in Jenkins credentials
+        DOCKER_IMAGE = '<dockerhub-username>/sleepsense-app'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo "Checking out source code..."
-                checkout scm
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                echo "Installing Python dependencies..."
-                sh 'pip install -r requirements.txt'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                echo "Running basic Flask test..."
-                sh 'python -m py_compile app.py' // simple syntax check
+                git 'https://github.com/<your-username>/SleepSense.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo "Building Docker image..."
-                sh 'docker build -t ${DOCKER_IMAGE} .'
+                sh 'docker build -t $DOCKER_IMAGE:latest .'
             }
         }
 
-        stage('Run Container') {
+        stage('Push to Docker Hub') {
             steps {
-                echo "Running container..."
-                sh 'docker run -d -p 5000:5000 --name ${APP_NAME} ${DOCKER_IMAGE}'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh 'docker push $DOCKER_IMAGE:latest'
             }
         }
 
-        stage('Post-Build Cleanup') {
+        stage('Deploy to Kubernetes') {
             steps {
-                echo "Cleaning up old containers..."
-                sh 'docker stop ${APP_NAME} || true'
-                sh 'docker rm ${APP_NAME} || true'
+                sh 'kubectl apply -f deployment.yaml'
+                sh 'kubectl apply -f service.yaml'
             }
         }
     }
 
     post {
-        success {
-            echo "✅ Build & deployment completed successfully!"
-        }
-        failure {
-            echo "❌ Build failed. Check logs for details."
-        }
+        success { echo "✅ Deployment completed successfully!" }
+        failure { echo "❌ Deployment failed." }
     }
 }
