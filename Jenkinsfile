@@ -2,26 +2,32 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Add in Jenkins credentials
-        DOCKER_IMAGE = 'dockerhub-sabavathlakshmi/sleepsense-app'
+        DOCKER_IMAGE = 'sabavathlakshmi/sleepsense-app:latest'
+        DOCKERHUB_CREDENTIALS = 'dockerhub-creds' // your Jenkins Docker Hub credential ID
     }
 
-    stage('Docker Login') {
+    stages {
+        stage('Checkout Code') {
             steps {
-                bat 'docker login -u sabavathlakshmi -p Laxmi@Sabavath'
+                git branch: 'main', url: 'https://github.com/lakshmisabavath/SleepSense-Sleep-Pattern-Logger.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE:latest .'
+                script {
+                    docker.build(DOCKER_IMAGE)
+                }
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Push Docker Image') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push $DOCKER_IMAGE:latest'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                        docker.image(DOCKER_IMAGE).push()
+                    }
+                }
             }
         }
 
@@ -31,10 +37,21 @@ pipeline {
                 sh 'kubectl apply -f service.yaml'
             }
         }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
+            }
+        }
     }
 
     post {
-        success { echo "✅ Deployment completed successfully!" }
-        failure { echo "❌ Deployment failed." }
+        success {
+            echo 'SleepSense App Deployed Successfully!'
+        }
+        failure {
+            echo 'Pipeline Failed! Check logs.'
+        }
     }
 }
