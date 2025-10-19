@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Add in Jenkins credentials
-        DOCKER_IMAGE = '<dockerhub-username>/sleepsense-app'
+        DOCKER_IMAGE = 'dockerhub-sabavathlakshmi/sleepsense-app'
     }
 
     stages {
